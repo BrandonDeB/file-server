@@ -4,6 +4,7 @@ from .models import (
     User,
     Folder,
 )
+from .forms import FileUpload
 # Register your models here.
 admin.site.register(File)
 admin.site.register(User)

@@ -1,0 +1,13 @@
+{% extends "master.html" %}
+
+{% block title %}
+   Upload a new File
+{% endblock %}
+
+{% block content %}
+   <form action="/files/upload/" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Submit">
+   </form>
+{% endblock %}

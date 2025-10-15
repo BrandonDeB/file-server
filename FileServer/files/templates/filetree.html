@@ -5,5 +5,7 @@
 {% endblock %}
 
 {% block content %}
+   <a href='/files/upload'>Upload a file</a>
+   <a href='/folders/add'>Add a folder</a>
    {% include "recursivedisplay.html" with folder_tree=main %}
 {% endblock %}
