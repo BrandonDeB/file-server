@@ -1,0 +1,9 @@
+{% extends "master.html" %}
+
+{% block title %}
+   File Tree Displayed
+{% endblock %}
+
+{% block content %}
+   {% include "recursivedisplay.html" with folder_tree=main %}
+{% endblock %}

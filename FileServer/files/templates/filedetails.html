@@ -1,0 +1,12 @@
+{% extends "master.html" %}
+
+{% block title %}
+   {{file.name}}
+{% endblock %}
+
+{% block content %}
+   <h1>{{file.name}}</h1>
+   <p>Folder: {{file.folder}}</p>
+   <p>Path: {{file.path}}</p>
+   <a href='/files'>Return back to list</a>
+{% endblock %}
