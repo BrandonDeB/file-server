@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 def recurse_get_fp(folder):
     if folder.parent is None:
@@ -11,15 +12,15 @@ def user_directory_path(instance, filename):
 
 # Create your models here.
 class Folder(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=False)
     parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
 
-class User(models.Model):
+class Client(models.Model):
     master = models.ForeignKey(Folder, on_delete=models.CASCADE, null=False)
-    name = models.CharField(max_length=255)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class File(models.Model):
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, null=False)

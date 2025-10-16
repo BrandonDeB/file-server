@@ -1,0 +1,22 @@
+{% extends "loginmaster.html" %}
+
+{% block title %}
+   Login
+{% endblock %}
+
+{% block content %}
+   {% if messages %}
+   <div class="alert alert-primary" role="alert">
+      {% for message in messages %}
+      {{ message }}
+      {% endfor %}
+   </div>
+   {% endif %}
+   <h1>Login</h1>
+   <form action="/login/" method="POST">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Submit">
+   </form>
+   <a href="/register/"> New User? Create an Account! </a>
+{% endblock %}
