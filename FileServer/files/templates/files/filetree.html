@@ -1,0 +1,11 @@
+{% extends "master.html" %}
+
+{% block title %}
+   File Tree Displayed
+{% endblock %}
+
+{% block content %}
+   <a href='{% url 'files:upload' %}'>Upload a file</a>
+   <a href='{% url 'files:folder_add' %}'>Add a folder</a>
+   {% include "files/recursivedisplay.html" with folder_tree=main %}
+{% endblock %}

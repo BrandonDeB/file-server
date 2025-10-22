@@ -1,0 +1,39 @@
+{% extends "master.html" %}
+
+{% block title %}
+   Edit
+{% endblock %}
+
+{% block content %}
+   <textarea id="texter" type="text" size="100" ></textarea><br>
+   <input id="save" type="button" value="Save">
+   {{ file_id|json_script:"file-id" }}
+   <script>
+      const fileId = JSON.parse(document.getElementById("file-id").textContent);
+
+      const fileSocket = new WebSocket(
+         'ws://'
+         + window.location.host
+         + '/ws/file/'
+         + fileId 
+         + '/'
+      );
+
+      fileSocket.onmessage = function(e) {
+         const data = JSON.parse(e.data);
+         document.querySelector('#texter').value = data.file;
+      }
+
+      fileSocket.onclose = function(e) {
+         console.error('Chat socket closed');
+      }
+
+      document.querySelector('#save').onclick = function(e) {
+         const fileSaveDom = document.querySelector('#texter');
+         const file = fileSaveDom.value;
+         fileSocket.send(JSON.stringify({
+            'file': file
+         }));
+      };
+   </script>
+{% endblock %}

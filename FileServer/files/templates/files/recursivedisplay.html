@@ -2,10 +2,10 @@
 {% for folder in folder_tree.folders %}
    <li>
       Folder: {{folder.name}}
-      {% include "recursivedisplay.html" with folder_tree=folder %}
+      {% include "files/recursivedisplay.html" with folder_tree=folder %}
    </li>
 {% endfor %}
 {% for file in folder_tree.files %}
-   <li><a href="file/{{file.id}}"> {{file.name}} </a></li>
+   <li><a href="{% url 'files:details' file.id %}"> {{file.name}} </a></li>
 {% endfor %}
 </ul>

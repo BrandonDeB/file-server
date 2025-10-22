@@ -1,4 +1,4 @@
-{% extends "loginmaster.html" %}
+{% extends "login/loginmaster.html" %}
 
 {% block title %}
    Login
@@ -13,10 +13,10 @@
    </div>
    {% endif %}
    <h1>Login</h1>
-   <form action="/login/" method="POST">
+   <form action="{% url 'files:login' %}" method="POST">
       {% csrf_token %}
       {{ form }}
       <input type="submit" value="Submit">
    </form>
-   <a href="/register/"> New User? Create an Account! </a>
+   <a href="{% url 'files:register' %}"> New User? Create an Account! </a>
 {% endblock %}

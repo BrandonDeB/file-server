@@ -1,11 +1,11 @@
 {% extends "master.html" %}
 
 {% block title %}
-   Create a New folder
+   Upload a new File
 {% endblock %}
 
 {% block content %}
-   <form action="/folders/add/" method="POST">
+   <form action="{% url 'files:upload' %}" method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       {{ form }}
       <input type="submit" value="Submit">
