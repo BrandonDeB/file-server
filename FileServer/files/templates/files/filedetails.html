@@ -8,6 +8,9 @@
    <h1>{{file.name}}</h1>
    <p>Folder: {{file.folder}}</p>
    <p>Path: {{file.path}}</p>
-   <a href="{{ file.url }}" download> Download Now!</a>
+   {% if file.type == 'TXT' %}
+   <a href='{% url 'files:edit' file.id %}'> Edit this File </a>
+   {% endif %}
+   <a href="{% url 'files:download' file.id %}"> Download Now!</a>
    <a href='{% url 'files:files' %}'>Return back to list</a>
 {% endblock %}

@@ -5,11 +5,12 @@
 {% endblock %}
 
 {% block content %}
-   <textarea id="texter" type="text" size="100" ></textarea><br>
+   <h1>{{ file.name }}</h1>
+   <textarea id="texter" type="text" size="100" >{{ file.contents }}</textarea><br>
    <input id="save" type="button" value="Save">
-   {{ file_id|json_script:"file-id" }}
+   {{ file.id|json_script:"file_id" }}
    <script>
-      const fileId = JSON.parse(document.getElementById("file-id").textContent);
+      const fileId = JSON.parse(document.getElementById("file_id").textContent);
 
       const fileSocket = new WebSocket(
          'ws://'
@@ -21,7 +22,7 @@
 
       fileSocket.onmessage = function(e) {
          const data = JSON.parse(e.data);
-         document.querySelector('#texter').value = data.file;
+         document.querySelector('#texter').value = data.file.contents;
       }
 
       fileSocket.onclose = function(e) {
@@ -30,9 +31,10 @@
 
       document.querySelector('#save').onclick = function(e) {
          const fileSaveDom = document.querySelector('#texter');
-         const file = fileSaveDom.value;
+         const file_contents = fileSaveDom.value;
          fileSocket.send(JSON.stringify({
-            'file': file
+            'contents': file_contents,
+            'file_id': fileId,
          }));
       };
    </script>

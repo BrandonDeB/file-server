@@ -15,29 +15,35 @@ def get_folders(folder):
     print(children)
     return children
 
+def get_master(user):
+    return Folder.objects.filter(owner=user.client, parent__isnull=True).first()
+
 class FileUpload(ModelForm):
     class Meta:
         model = File
-        fields = "__all__"
+        fields = ["folder", "upload", "file_type", "shared_with"]
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user is not None:
-            master = user.client.master
-            folders = get_folders(master)
+            folders = get_folders(get_master(user))
             self.fields['folder'].queryset = Folder.objects.filter(id__in=[f.id for f in folders])
+            self.fields['folder'].empty_label = None
+            self.fields['shared_with'].queryset = (
+                self.fields['shared_with'].queryset.exclude(id=user.id)
+            )
 
 class CreateFolder(ModelForm):
     class Meta:
         model = Folder
-        fields = "__all__"
+        fields = ["name", "parent"]
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user is not None:
-            master = user.client.master
-            folders = get_folders(master)
+            folders = get_folders(get_master(user))
             self.fields['parent'].queryset = Folder.objects.filter(id__in=[f.id for f in folders])
+            self.fields['parent'].empty_label = None
 
 class CreateUser(ModelForm):
     class Meta:

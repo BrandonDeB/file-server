@@ -58,12 +58,11 @@ def register_view(request):
         
         user = User.objects.create_user(username=username)
         user.set_password(password)
-        folder = Folder(name="home")
-        folder.save()
-        client = Client(user=user, master=folder)
+        client = Client(user=user)
         user.save()
         client.save()
-
+        folder = Folder(name="home", owner=client)
+        folder.save()
         messages.info(request, "New account created!")
         return redirect('/login/')
     else:

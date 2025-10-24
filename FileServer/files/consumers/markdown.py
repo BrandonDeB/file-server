@@ -1,6 +1,9 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
+from ..models import (
+    File,
+)
 
 class FileConsumer(WebsocketConsumer):
     def connect(self):
@@ -23,12 +26,23 @@ class FileConsumer(WebsocketConsumer):
         if not text_data:
             return
         file_data_json = json.loads(text_data)
-        file = file_data_json["file"]
+        contents = file_data_json["contents"]
+        id = file_data_json["file_id"]
 
-        self.send(text_data=json.dumps({"file": file}))
+        file_obj = File.objects.get(id=id)
+        with open(file_obj.upload.path, "w") as writer:
+            writer.write(contents)
+
+        context = {
+            'name': file_obj.upload.url,
+            'contents': contents,
+            'id': id,
+        }
+
+        self.send(text_data=json.dumps({"file": context}))
 
         async_to_sync(self.channel_layer.group_send) (
-            self.file_group_name, {"type": "save.document", "file": file}
+            self.file_group_name, {"type": "save.document", "file": context}
         )
 
     def save_document(self, event):

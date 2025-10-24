@@ -16,4 +16,5 @@ urlpatterns = [
     path('register/', login.register_view, name='register'),
     path('logout/', login.logout_view, name='logout'),
     path('file/edit/<int:file_id>', edit.edit, name='edit'),
+    path('file/download/<int:file_id>', files.download_file, name='download')
 ]

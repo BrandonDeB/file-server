@@ -7,5 +7,12 @@
 {% block content %}
    <a href='{% url 'files:upload' %}'>Upload a file</a>
    <a href='{% url 'files:folder_add' %}'>Add a folder</a>
+   <h2>Your Files</h2>
    {% include "files/recursivedisplay.html" with folder_tree=main %}
+   <h2>Shared with You</h2>
+   <ul>
+   {% for file in shared %}
+   <li><a href="{% url 'files:details' file.id %}"> {{file.name}} </a></li>
+   {% endfor %}
+   </ul>
 {% endblock %}
