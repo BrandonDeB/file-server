@@ -6,10 +6,14 @@
 
 {% block content %}
    <h1>{{ file.name }}</h1>
-   <textarea id="texter" type="text" size="100" >{{ file.contents }}</textarea><br>
+   <textarea id="texter" type="text" >{{ file.contents }}</textarea><br>
    <input id="save" type="button" value="Save">
    {{ file.id|json_script:"file_id" }}
    <script>
+      const easyMDE = new EasyMDE({
+         element: document.getElementById('texter'),
+         forceSync: true
+      })
       const fileId = JSON.parse(document.getElementById("file_id").textContent);
 
       const fileSocket = new WebSocket(
@@ -26,12 +30,11 @@
       }
 
       fileSocket.onclose = function(e) {
-         console.error('Chat socket closed');
+         console.error('Socket closed');
       }
 
       document.querySelector('#save').onclick = function(e) {
-         const fileSaveDom = document.querySelector('#texter');
-         const file_contents = fileSaveDom.value;
+         const file_contents = easyMDE.value();
          fileSocket.send(JSON.stringify({
             'contents': file_contents,
             'file_id': fileId,

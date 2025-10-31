@@ -42,7 +42,7 @@ class File(models.Model):
     owner = models.ForeignKey(Client, on_delete=models.CASCADE, null=False, related_name='owned_files')
 
     def can_access(self, user):
-        return user == self.owner or user in self.shared_with.all()
+        return user == self.owner or self.shared_with.filter(id=user.id).exists()
 
     def is_editable(self):
         return self.file_type == "TXT"

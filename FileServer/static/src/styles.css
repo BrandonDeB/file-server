@@ -1,0 +1,18 @@
+body {
+  font-family: sans-serif;
+}
+
+#roll-area {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+#rollBtn {
+  position: relative;
+  cursor: pointer;
+  z-index: 2;
+}

@@ -4,6 +4,8 @@ from .models import (
     File,
     Folder,
 )
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
 
 def get_folders(folder):
     stack = [folder]
@@ -49,3 +51,17 @@ class CreateUser(ModelForm):
     class Meta:
         model = User
         fields = ["username", "password"]
+
+class LoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+    
+    username = UsernameField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': '', 'id': 'username'}))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': '',
+            'id': 'password',
+        }
+    ))

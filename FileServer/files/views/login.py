@@ -1,14 +1,14 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from django.contrib.auth.forms import AuthenticationForm
 from ..models import ( 
     Folder,
     Client,
 )
 from django.contrib.auth.models import User
 from ..forms import (
-    CreateUser
+    CreateUser,
+    LoginForm,
 )
 
 def logout_view(request):
@@ -17,7 +17,7 @@ def logout_view(request):
 
 def login_view(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
@@ -37,12 +37,12 @@ def login_view(request):
             login(request, user)
             return redirect('/')
     else:
-        form = CreateUser()
+        form = LoginForm()
     return render(request, 'login/login.html', {"form": form})
 
 def register_view(request):
     if request.method == "POST":
-        form = CreateUser(request.POST)
+        form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
@@ -66,5 +66,5 @@ def register_view(request):
         messages.info(request, "New account created!")
         return redirect('/login/')
     else:
-        form = CreateUser()
+        form = LoginForm()
     return render(request, 'login/register.html', {"form": form})

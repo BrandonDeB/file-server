@@ -4,6 +4,9 @@ from ..models import (
     File,
 )
 from django.contrib.auth.decorators import login_required
+from django.template import loader
+
+error_template = loader.get_template('errors/basicerror.html')
 
 @login_required
 def edit(request, file_id):
@@ -11,20 +14,44 @@ def edit(request, file_id):
     try:
         file = File.objects.get(id=file_id)
     except:
-        return HttpResponseNotFound("Requested File does not exit")
+        error = {
+            'context': {
+                    'title': "Does not exist",
+                    'error_message': "You are trying to access a file that does not exist"
+                }
+        }
+        return HttpResponseNotFound(error_template.render(error,request))
 
     if not file.can_access(request.user.client):
-        return HttpResponseForbidden("You do not have access to this file")
+        error = {
+            'context': {
+                    'title': "No access",
+                    'error_message': "You are trying to access a file that is not owned or shared with you"
+                }
+        }
+        return HttpResponseForbidden(error_template.render(error,request))
 
     if not file.is_editable():
-        return HttpResponseForbidden("This file may not be edited")
+        error = {
+            'context': {
+                    'title': "Not editable",
+                    'error_message': "You are trying to edit a file that may not be edited"
+                }
+        }
+        return HttpResponseForbidden(error_template.render(error, request))
     
     try:
         print(file.upload.path)
         with open(file.upload.path, "r") as reader:
             content = reader.read()
     except FileNotFoundError:
-        return HttpResponseNotFound("File could not be read from server")
+        error = {
+            'context': {
+                    'title': "Unreadable",
+                    'error_message': "The file you are looking for cannot be found in the server"
+                }
+        }
+        return HttpResponseNotFound(error_template.render(error, request))
 
     context = {
         'name': file.upload.url,

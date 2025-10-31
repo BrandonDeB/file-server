@@ -6,6 +6,11 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+FileServer/front-end/package-lock.json
+FileServer/front-end/node_modules/
+FileServer/front-end/dist/
+FileServer/static/node_modules/
+
 # C extensions
 *.so
 

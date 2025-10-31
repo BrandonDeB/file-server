@@ -10,7 +10,11 @@ class FileConsumer(WebsocketConsumer):
         route_kwargs = self.scope.get("url_route", {}).get("kwargs", {})
         self.file_id = route_kwargs.get("file_id")
         self.file_group_name = f"file_{self.file_id}"
-
+        file_obj = File.objects.get(id=self.file_id)
+        if not file_obj.can_access(self.scope["user"].client):
+            print("Cannot access this file")
+            self.close(code=4003) 
+            return
         async_to_sync(self.channel_layer.group_add) (
             self.file_group_name, self.channel_name
         )
@@ -21,6 +25,7 @@ class FileConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard) (
             self.file_group_name, self.channel_name
         )
+        self.close()
 
     def receive(self, text_data: str | None = None, bytes_data: bytes | None = None):
         if not text_data:
@@ -30,6 +35,10 @@ class FileConsumer(WebsocketConsumer):
         id = file_data_json["file_id"]
 
         file_obj = File.objects.get(id=id)
+        if not file_obj.can_access(self.scope["user"].client):
+            print("Cannot access this file")
+            self.close()
+            return
         with open(file_obj.upload.path, "w") as writer:
             writer.write(contents)
 
@@ -47,4 +56,8 @@ class FileConsumer(WebsocketConsumer):
 
     def save_document(self, event):
         file = event["file"]
+        file_obj = File.objects.get(id=file['id'])
+        if not file_obj.can_access(self.scope.get("user").client):
+            self.close()
+            return
         self.send(text_data=json.dumps({"file": file}))
