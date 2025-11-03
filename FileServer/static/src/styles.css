@@ -4,13 +4,32 @@ body {
 
 #roll-area {
    width: 80vw;
-   height: 80vh;
    overflow: visible;
 }
 
 .single-roller {
+   height: 40vh;
+   outline: 2px solid;
+   margin: 2rem;
+   justify-items: center;
+   align-items: center;
+   position: relative;
+}
+
+.player-label {
+   position: absolute;
+}
+
+.popup {
+   width: 50%;
    height: 50%;
-   overflow: visible;
+   z-index: 3;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   text-align: center;
+   background-color: rgba(0, 0, 0, 0.4);
 }
 
 #rollBtn {

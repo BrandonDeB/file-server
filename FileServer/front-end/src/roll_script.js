@@ -15,7 +15,9 @@ const rollBtn = document.getElementById("rollBtn");
 const rollInp = document.getElementById("rollinput");
 const rollArea = document.getElementById("roll-area");
 const currentUser = JSON.parse(document.getElementById("user").textContent);
-console.log(currentUser);
+const userList = document.getElementById("user-list");
+const rollerSpace = document.getElementById("roll-area"); 
+
 document.querySelector('#rollBtn').onclick = function(e) {
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
@@ -32,8 +34,80 @@ document.querySelector('#rollBtn').onclick = function(e) {
   );
 };
 
-
 const roomId = JSON.parse(document.getElementById("roomcode").textContent);
+
+function getRollAreaId(user) {
+   return `${user}-roll-area`;
+}
+
+function createDiceBox(user) {
+   return new DiceBox(`#${getRollAreaId(user)}`, {
+      theme_customColorset: {
+         background: "#00ffcb",
+         foreground: "#ffffff",
+         material: "metal" // metal | glass | plastic | wood
+      },
+      light_intensity: 1,
+      gravity_multiplier: 400,
+      baseScale: 60,
+      strength: 5,
+      onRollComplete: (results) => {
+         if (currentUser == user) {
+            roomSocket.send(JSON.stringify({
+               "user": user,
+               "results": results
+            }));
+         }
+         document.getElementById(`${user}-popup-text`).textContent = `${results.notation}=${results.total}`;
+         document.getElementById(`${user}-popup`).style.display = "block";
+      }
+   });
+
+}
+
+function createPopup(user) {
+   const popup = document.createElement("div");
+   const closeButton = document.createElement("span");
+   const popupText = document.createElement("p");
+   popup.className = "popup";
+   popup.id = `${user}-popup`;
+   popup.style.display = "none";
+   popupText.id = `${user}-popup-text`;
+   closeButton.className = "close-btn";
+   closeButton.textContent = "×";
+   closeButton.onclick = () => {
+      popup.style.display = "none";
+   }
+
+   popup.appendChild(closeButton);
+   popup.appendChild(popupText);
+
+   return popup;
+}
+
+function createDiceObjects(users) {
+   rollers = new Map();
+   users.forEach((user, index) => {
+      const li = document.createElement("li");
+      const ua = document.createElement("div");
+      const name = document.createElement("h3");
+      name.textContent = user;
+      name.className = "player-label";
+      ua.id = getRollAreaId(user);
+      ua.className = "single-roller";
+      li.textContent = user;
+      li.id = user+"-list-item";
+      if (!document.getElementById(li.id)) {
+         ua.appendChild(createPopup(user));
+         ua.appendChild(name);
+         userList.appendChild(li);
+         rollArea.appendChild(ua);
+         const Box = createDiceBox(user);
+         Box.initialize();
+         rollers.set(user, Box);
+      }
+   });
+}
 
 const roomSocket = new WebSocket(
    'ws://'
@@ -45,15 +119,13 @@ const roomSocket = new WebSocket(
 
 roomSocket.onmessage = function(e) {
    const data = JSON.parse(e.data);
+
    if (data.type == "roll") {
-      console.log("Someone rolled the dice");
-      //ROLL THE DICE
       if (currentUser == data.user) {
          return;
       }
       let notation = data.results.notation;
       const sets = data.results.sets;
-      console.log("Sets:" + sets.join(","));
       let rolls = []
       for (const set of sets) {
          for (const roll of set.rolls) {
@@ -61,52 +133,12 @@ roomSocket.onmessage = function(e) {
          }
       }
       notation += "@" + rolls.join(",");
-      console.log(notation);
       rollers.get(data.user).roll(notation);
    } else if (data.type == "load.users") {
-      const userList = document.getElementById("user-list");
-      const rollerSpace = document.getElementById("roll-area"); 
       rollerSpace.innerHTML = "";
       userList.innerHTML = ""; 
-      console.log(data.users);
 
-      rollers = new Map();
-      data.users.forEach((user, index) => {
-         const li = document.createElement("li");
-         const ua = document.createElement("div");
-         ua.id = user+"-roll-area";
-         ua.className = "single-roller";
-         li.textContent = user;
-         li.id = user+"-list-item";
-         if (!document.getElementById(li.id)) {
-            userList.appendChild(li);
-            rollArea.appendChild(ua);
-            const Box = new DiceBox("#"+ua.id, {
-              theme_customColorset: {
-                background: "#00ffcb",
-                foreground: "#ffffff",
-                material: "metal" // metal | glass | plastic | wood
-              },
-              light_intensity: 1,
-              gravity_multiplier: 400,
-              baseScale: 60,
-              strength: 5,
-              onRollComplete: (results) => {
-                console.log(`I've got results :>> `, results);
-                  if (currentUser == user) {
-                     roomSocket.send(JSON.stringify({
-                        "user": user,
-                        "results": results
-                     }));
-                  }
-              }
-            });
-
-            Box.initialize();
-            rollers.set(user, Box);
-         }
-      });
-      
+      createDiceObjects(data.users);
    }
 }
 
