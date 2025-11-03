@@ -3,16 +3,28 @@ body {
 }
 
 #roll-area {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
+   width: 80vw;
+   height: 80vh;
+   overflow: visible;
+}
+
+.single-roller {
+   height: 50%;
+   overflow: visible;
 }
 
 #rollBtn {
   position: relative;
   cursor: pointer;
   z-index: 2;
+}
+
+#rollinput {
+   position: relative;
+   z-index: 2;
+}
+
+#user-list {
+   position: relative;
+   z-index: 2;
 }

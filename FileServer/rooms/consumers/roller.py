@@ -58,22 +58,24 @@ class RollerConsumer(WebsocketConsumer):
         if not text_data:
             return
         roll_data_json = json.loads(text_data)
-        contents = roll_data_json["contents"]
-
-        context = {
-            'contents': contents,
-            'id': id,
-        }
-
-        self.send(text_data=json.dumps({"file": context}))
+        user = roll_data_json["user"]
+        results = roll_data_json["results"]
 
         async_to_sync(self.channel_layer.group_send) (
-            self.room_name, {"type": "roll", "file": context}
+            self.room_name, {"type": "roll", "user": user, "results": results}
         )
 
     def members_load(self, event):
         current_members = r.smembers(f"room:{self.room_name}:users")
-        print(current_members)
         current_members = [m.decode("utf-8") for m in current_members]
-        print(current_members)
         self.send(text_data=json.dumps({"type": "load.users", "users": current_members}))
+
+    def roll(self, event):
+        user = event["user"]
+        results = event["results"]
+
+        self.send(text_data=json.dumps({
+            "type": "roll",
+            "user": user,
+            "results": results
+        }))

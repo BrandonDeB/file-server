@@ -10,9 +10,9 @@
    <p>Path: {{file.path}}</p>
    <div class="row">
    {% if file.type == 'TXT' %}
-   <a class="btn btn-primary w-auto" href='{% url 'files:edit' file.id %}'> Edit this File </a>
+   <a href='{% url 'files:edit' file.id %}'> Edit this File </a>
    {% endif %}
-   <a class="btn btn-secondary w-auto" href="{% url 'files:download' file.id %}"> Download Now!</a>
-   <a class="btn btn-info w-auto" href='{% url 'files:files' %}'>Return back to list</a>
+   <a href="{% url 'files:download' file.id %}"> Download Now!</a>
+   <a href='{% url 'files:files' %}'>Return back to list</a>
    </div>
 {% endblock %}

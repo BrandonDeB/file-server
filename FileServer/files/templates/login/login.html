@@ -6,27 +6,15 @@
 
 {% block content %}
    {% if messages %}
-   <div class="alert alert-primary" role="alert">
       {% for message in messages %}
       {{ message }}
       {% endfor %}
-   </div>
    {% endif %}
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-5">
-      <div class="card shadow-lg rounded-4">
-        <div class="card-body p-4">
    <h1>Login</h1>
    <form action="{% url 'files:login' %}" method="POST">
       {% csrf_token %}
       {{ form }}
-      <input class="btn btn-primary" type="submit" value="Submit">
+      <input type="submit" value="Submit">
    </form>
-   <a class="btn btn-primary" href="{% url 'files:register' %}" role="button"> Create an Account! </a>
-      </div>
-      </div>
-         </div>
-      </div>
-   </div>
+   <a href="{% url 'files:register' %}" role="button"> Create an Account! </a>
 {% endblock %}

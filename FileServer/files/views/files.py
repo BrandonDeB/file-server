@@ -12,7 +12,7 @@ from ..forms import (
 from django.contrib.auth.decorators import login_required
 import re
 import os
-# Create your views here.
+
 def add_display_names(file_list):
     for item in file_list:
         item['name'] =  re.sub(r".*/", "", item['upload'])

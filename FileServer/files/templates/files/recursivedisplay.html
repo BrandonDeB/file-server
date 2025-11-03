@@ -1,15 +1,9 @@
-<ul class="list-group">
-<button class="btn btn-primary" style="width: 20rem;" data-bs-toggle="collapse" data-bs-target="#folderid-{{folder_tree.id}}">
-   Folder: {{folder_tree.name}}
-</button>
-<div class="collapse collapse-vertical" id="folderid-{{folder_tree.id}}">
+Folder: {{folder_tree.name}}
+<ul>
 {% for folder in folder_tree.folders %}
-   <li class="list-group-item">
-      {% include "files/recursivedisplay.html" with folder_tree=folder %}
-   </li>
+   <li>{% include "files/recursivedisplay.html" with folder_tree=folder %}</li>
 {% endfor %}
 {% for file in folder_tree.files %}
-      <li class="list-group-item"><a href="{% url 'files:details' file.id %}"> {{file.name}} </a></li>
+      <li><a href="{% url 'files:details' file.id %}"> {{file.name}} </a></li>
 {% endfor %}
-</div>
 </ul>

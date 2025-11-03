@@ -8,45 +8,11 @@
    <body>
       <h1>{{code}}</h1>
       <ul id="user-list"></ul>
-      <input id="rollinput" type="text" />
+      <input id="rollinput" type="text" name="rollinput" />
       <button id="rollBtn">Roll!</button>
       <div id="roll-area"></div>
+      {{ code|json_script:"roomcode" }}
+      {{ user|json_script:"user" }}
       <script type="module" src="{% static 'src/roll_script.js' %}"></script>
-      <script>
-         const roomId = "{{code}}";
-
-         const roomSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/rooms/'
-            + roomId
-            + '/'
-         );
-
-         roomSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            if (data.type == "roll") {
-               //ROLL THE DICE
-               console.log("Rolling dice");
-            } else if (data.type == "load.users") {
-               const userList = document.getElementById("user-list");
-               userList.innerHTML = ""; 
-               console.log(data.users);
-               data.users.forEach((user, index) => {
-                  const li = document.createElement("li");
-                  li.textContent = user;
-                  li.id = user;
-                  if (!document.getElementById(li.id)) {
-                     userList.appendChild(li);
-                  }
-               });
-
-            }
-         }
-
-         roomSocket.onclose = function(e) {
-            console.error('Socket closed');
-         }
-      </script>
    </body>
 </html>
